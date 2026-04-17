@@ -21,8 +21,7 @@ def get_live_matches():
 
 def check_matches():
     data = get_live_matches()
-
-    for match in data.get("response", []):
+for match in data.get("response", []):
         home = match["teams"]["home"]["name"]
         away = match["teams"]["away"]["name"]
 
@@ -31,8 +30,11 @@ def check_matches():
 
         status = match["fixture"]["status"]["short"]
 
-        if status == "HT" and hg == 0 and ag == 0:
-            invia_messaggio(f"⚠️ 0-0 INTERVALLO: {home} vs {away}")
+        total_goals = (hg or 0) + (ag or 0)
+
+        # 🔥 OVER 0.5 LIVE (almeno 1 gol)
+        if status in ["1H", "2H"] and total_goals >= 1:
+            invia_messaggio(f"🔥 OVER 0.5 LIVE: {home} vs {away} ({hg}-{ag})")
 
 def main():
     invia_messaggio("✅ Bot live partite reali attivo")
