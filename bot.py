@@ -21,6 +21,7 @@ def get_live_matches():
 
 def check_matches():
     data = get_live_matches()
+    
 for match in data.get("response", []):
         home = match["teams"]["home"]["name"]
         away = match["teams"]["away"]["name"]
