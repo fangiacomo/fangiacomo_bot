@@ -10,7 +10,12 @@ def invia_messaggio(testo):
     data = {"chat_id": CHAT_ID, "text": testo}
     requests.post(url, data=data)
 
-invia_messaggio("✅ Bot attivo")
+def main():
+    if TOKEN and CHAT_ID:
+        invia_messaggio("✅ Bot attivo su cloud")
 
-while True:
-    time.sleep(60)
+    while True:
+        time.sleep(60)
+
+if __name__ == "__main__":
+    main()
