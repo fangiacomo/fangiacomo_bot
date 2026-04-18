@@ -1,4 +1,4 @@
-mport requests
+import requests
 import os
 
 print("BOT PARTITO")
