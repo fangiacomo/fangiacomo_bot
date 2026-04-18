@@ -9,7 +9,6 @@ import os
 API_KEY = os.getenv("API_KEY")
 API_HOST = os.getenv("API_HOST")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
