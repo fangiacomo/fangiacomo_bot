@@ -196,4 +196,18 @@ def run_bot():
 # ======================
 
 if __name__ == "__main__":
-    run_bot()
+def run_bot():
+
+    send_message("🔥 BOT LIVE ATTIVO")  # 👈 QUI
+
+    print("BOT START OK")
+
+    while True:
+        try:
+            live_matches = get_live_matches()
+            prematch = get_prematch()
+
+        except Exception as e:
+            print("ERROR:", e)
+
+        time.sleep(60)
