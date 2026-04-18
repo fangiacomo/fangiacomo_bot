@@ -3,7 +3,7 @@ import time
 import os
 
 # ======================
-# CONFIG
+# ENV VARIABLES
 # ======================
 
 API_KEY = os.getenv("API_KEY")
@@ -13,22 +13,30 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 # ======================
-# TELEGRAM SAFE
+# SAFE TELEGRAM
 # ======================
 
 def send_message(text):
     try:
+        if not TELEGRAM_TOKEN or not CHAT_ID:
+            print("MISSING TELEGRAM ENV VARIABLES")
+            return
+
         url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
         requests.post(url, data={"chat_id": CHAT_ID, "text": text}, timeout=10)
+
     except Exception as e:
         print("TELEGRAM ERROR:", e)
 
 # ======================
-# LIVE MATCHES
+# SAFE LIVE MATCHES
 # ======================
 
 def get_live_matches():
     try:
+        if not API_KEY or not API_HOST:
+            return []
+
         url = "https://v3.football.api-sports.io/fixtures?live=all"
         headers = {
             "x-rapidapi-key": API_KEY,
@@ -43,11 +51,14 @@ def get_live_matches():
         return []
 
 # ======================
-# PREMATCH (STABILE)
+# SAFE PREMATCH
 # ======================
 
 def get_prematch():
     try:
+        if not API_KEY or not API_HOST:
+            return []
+
         url = "https://v3.football.api-sports.io/fixtures?next=10"
         headers = {
             "x-rapidapi-key": API_KEY,
@@ -62,54 +73,52 @@ def get_prematch():
         return []
 
 # ======================
-# SIMPLE PROBABILITY (SAFE)
+# SAFE PROBABILITY
 # ======================
 
-def calc_over05():
-    return 0.72  # valore stabile (evita crash)
+def calc_prob():
+    return 0.70
 
 # ======================
-# BOT MAIN
+# MAIN BOT
 # ======================
 
 def run_bot():
 
     print("BOT STARTING...")
 
-    # 🔥 sempre primo messaggio
+    # 🔥 NON CRASH START MESSAGE
     send_message("🔥 BOT LIVE ATTIVO")
 
     while True:
-
         try:
-            live_matches = get_live_matches()
+            print("LOOP RUNNING")
+
+            live = get_live_matches()
             prematch = get_prematch()
 
-            print("LIVE:", len(live_matches))
+            print("LIVE:", len(live))
             print("PREMATCH:", len(prematch))
 
             # ======================
-            # LIVE ALERT SIMPLE
+            # LIVE ALERT
             # ======================
-            if live_matches:
-                m = live_matches[0]
-
-                home = m["teams"]["home"]["name"]
-                away = m["teams"]["away"]["name"]
-                hg = m["goals"]["home"]
-                ag = m["goals"]["away"]
-
-                send_message(f"⚽ LIVE: {home} {hg}-{ag} {away}")
-
-            # ======================
-            # PREMATCH SIMPLE FILTER
-            # ======================
-            for match in prematch[:3]:
+            if live:
+                match = live[0]
 
                 home = match["teams"]["home"]["name"]
                 away = match["teams"]["away"]["name"]
 
-                prob = calc_over05()
+                send_message(f"⚽ LIVE: {home} vs {away}")
+
+            # ======================
+            # PREMATCH SIMPLE
+            # ======================
+            for m in prematch[:3]:
+                home = m["teams"]["home"]["name"]
+                away = m["teams"]["away"]["name"]
+
+                prob = calc_prob()
 
                 if prob >= 0.70:
                     send_message(f"🔥 PREMATCH OVER 0.5\n{home} vs {away}\nProb: {prob}")
@@ -124,11 +133,4 @@ def run_bot():
 # ======================
 
 if __name__ == "__main__":
-def run_bot():
-
-    print("BOT STARTING")
-
-    send_message("🔥 BOT LIVE ATTIVO")  # 👈 QUI
-
-    while True:
-        ...
+    run_bot()
