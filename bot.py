@@ -124,4 +124,11 @@ def run_bot():
 # ======================
 
 if __name__ == "__main__":
-    run_bot()
+def run_bot():
+
+    print("BOT STARTING")
+
+    send_message("🔥 BOT LIVE ATTIVO")  # 👈 QUI
+
+    while True:
+        ...
