@@ -22,24 +22,31 @@ def invia_messaggio(testo):
 def get_live_matches():
     try:
         url = "https://v3.football.api-sports.io/fixtures?live=all"
-        headers = {
-            "x-rapidapi-key": API_KEY,
-            "x-rapidapi-host": API_HOST
-        }
-        response = requests.get(url, headers=headers)
-        return response.json()
-    except Exception as e:
-        print("Errore API:", e)
-        return None
 
+    headers = {
+        "x-rapidapi-key": API_KEY,
+        "x-rapidapi-host": API_HOST
+    }
 
-# 🔍 Controllo partite
-def check_matches():
     try:
-        data = get_live_matches()
+        r = requests.get(url, headers=headers, timeout=10)
 
-        if not data:
-            return
+        print("STATUS CODE:", r.status_code)
+        print("RAW RESPONSE:", r.text[:300])
+
+        if r.status_code != 200:
+            return []
+
+        data = r.json()
+
+        if "response" not in data:
+            return []
+
+        return data["response"]
+
+    except Exception as e:
+        print("ERRORE REQUEST:", e)
+        return []
 
         for match in data.get("response", []):
             home = match.get("teams", {}).get("home", {}).get("name", "Home")
